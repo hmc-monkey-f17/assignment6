@@ -13,8 +13,8 @@ import unittest
 # (passing or failing).
 
 # modify this to GRU_CLASS = MyGRU to test *your* class
-#GRU_CLASS = mygru.MyGRU
-GRU_CLASS = torch.nn.GRU
+GRU_CLASS = mygru.MyGRU
+#GRU_CLASS = torch.nn.GRU
 
 class TestGRU(unittest.TestCase):
     def test_simplest_input_has_right_shapes(self):
@@ -61,9 +61,9 @@ class TestGRU(unittest.TestCase):
         input_size = 1
         hidden_size = 1
         gru = GRU_CLASS(input_size, hidden_size)
-        bias_hh_0 = gru.bias_hh_l0 # Hidden-hidden biases for first layer
+        bias_hh_0 = gru.b_hh[0] # Hidden-hidden biases for first layer
         bias_hh_0.data[1] = 10000000 # set b_hz to high number so that z will be close to 1
-        
+         
         num_layers = 1
         num_directions = 1
         bs = 1  # batch_size
@@ -85,8 +85,8 @@ class TestGRU(unittest.TestCase):
         gru = GRU_CLASS(input_size, hidden_size)
 
         # Extract weights and biases from the GRU_CLASS
-        bias_ih_0 = gru.bias_ih_l0
-        bias_hh_0 = gru.bias_hh_l0 
+        bias_ih_0 = gru.b_ih_l0
+        bias_hh_0 = gru.b_hh[0]
         b_ir = bias_ih_0[:hidden_size].unsqueeze(0).transpose(0, 1)
         b_iz = bias_ih_0[hidden_size:2*hidden_size].unsqueeze(0).transpose(0, 1)
         b_in = bias_ih_0[2*hidden_size:].unsqueeze(0).transpose(0, 1)
@@ -102,8 +102,9 @@ class TestGRU(unittest.TestCase):
         print("b_hz", b_hz, b_hz.shape)
         print("b_hn", b_hn, b_hn.shape)
 
-        weight_ih_0 = gru.weight_ih_l0
-        weight_hh_0 = gru.weight_hh_l0
+        weight_ih_0 = gru.w_ih_l0
+        weight_hh_0 = gru.w_hh[0]
+        print('weight',weight_ih_0)
         w_ir = weight_ih_0[:hidden_size]
         w_iz = weight_ih_0[hidden_size:2*hidden_size]
         w_in = weight_ih_0[2*hidden_size:]
